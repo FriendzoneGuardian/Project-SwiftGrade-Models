@@ -1,0 +1,11 @@
+__pycache__/
+*.log
+*.exe
+*.bin
+.DS_Store
+*.pyc
+.vscode/
+venv/
+.venv/
+*.h5
+.h5

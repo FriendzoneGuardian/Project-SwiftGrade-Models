@@ -77,14 +77,7 @@ packages = {
             ('keras', '')
         ]
     },
-    "3. Weeb Packages": {
-        # Weeb packages for waifus and anime
-        "3a. Weeb Tools": 
-        [
-            ('waifu2x', ''), ('deepdanbooru', ''), 
-            ('booru', ''), ('animegan', ''), ('rembg', '')
-        ]
-    }
+
 }
 
 # Header

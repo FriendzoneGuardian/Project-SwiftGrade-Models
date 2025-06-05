@@ -36,7 +36,7 @@ def create_model(input_shape=(224, 224, 3), num_classes=4):
 
     x = tf.keras.layers.Flatten()(x)
     x = tf.keras.layers.Dense(256)(x)
-    x = tf.keras.layers.LeakyReLU()(x)
+    # x = tf.keras.layers.LeakyReLU()(x)
     x = tf.keras.layers.Dropout(0.5)(x)
     
     # Multi-label sigmoid output for 4 classes

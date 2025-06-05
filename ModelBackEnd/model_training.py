@@ -36,7 +36,7 @@ def create_model(input_shape=(224, 224, 3), num_classes=4):
 
     x = tf.keras.layers.Flatten()(x)
     x = tf.keras.layers.Dense(256)(x)
-    # x = tf.keras.layers.LeakyReLU()(x)
+    x = tf.keras.layers.LeakyReLU()(x)
     x = tf.keras.layers.Dropout(0.5)(x)
     
     # Multi-label sigmoid output for 4 classes
@@ -53,7 +53,7 @@ model.summary()
 model.compile(
     optimizer='adam',
     loss='binary_crossentropy',
-    metrics=['accuracy']
+    metrics=['accuracy', 'precision', 'recall','f1_score']
 )
 
 # Train model
@@ -64,21 +64,31 @@ history = model.fit(
     epochs=EPOCHS
 )
 
-# Evaluate on test dataset
-test_loss, test_acc = model.evaluate(test_ds)
-print(f"Test Loss: {test_loss:.4f}, Test Accuracy: {test_acc:.4f}")
-
-# Create Confusion Matrix via Matplotlib and Scikit-learn
+#Create Confusion Matrix
 import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
-def plot_confusion_matrix(y_true, y_pred, classes):
-    cm = confusion_matrix(y_true, y_pred, labels=classes)
-    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=classes)
-    disp.plot(cmap=plt.cm.Blues)
-    plt.title("Confusion Matrix")
-    plt.show()
+from sklearn.metrics import confusion_matrix
+def create_confusion_matrix(model, dataset):
+    y_true = []
+    y_pred = []
 
+    for images, labels in dataset:
+        predictions = model.predict(images)
+        y_true.extend(labels.numpy())
+        y_pred.extend(predictions)
+
+    y_true = np.array(y_true)
+    y_pred = np.array(y_pred) > 0.5  # Threshold for multi-label classification
+
+    cm = confusion_matrix(y_true.argmax(axis=1), y_pred.argmax(axis=1))
+    # Whitespace for better readability
+    print("----- Confusion Matrix: -----")
+    print(cm)
+create_confusion_matrix(model, test_ds)
+
+# Evaluate on test dataset
+test_loss, test_acc, test_recall, test_precision, test_f1 = model.evaluate(test_ds)
+print(f"Test Loss: {test_loss:.4f}, Test Accuracy: {test_acc:.4f}")
+print(f"Test Precision: {test_precision:.4f}, Test Recall: {test_recall:.4f}")
 
 def save_and_convert_to_tflite(model, save_dir="ModelBackEnd/SwiftGrade_Datasets", model_name="swiftgrade_model"):
     os.makedirs(save_dir, exist_ok=True)
